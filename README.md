@@ -1,2 +1,4 @@
 # 2830A
-Course Page for 2830A: Research in Psychology
+
+## Overview
+This is a course page for Psychology 2830A: Research in Psychology (Huron University College). 
