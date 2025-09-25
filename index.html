@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="shortcut icon" href="favicon.ico">
+<title>Psychology 2830A</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<style>
+body,h1,h2,h3,h4,h5,h6,p {font-family: "Arial", sans-serif}
+.w3-navbar,h1,button {font-family: "Arial", sans-serif}
+.fa-anchor,.fa-coffee {font-size:150px}
+ ul {background-color: #e31838;}
+ a:hover {color: black}
+
+ hr.rounded {
+  border-top: 10px solid #bbb;
+  border-radius: 0px;
+  width:100%;
+  display: inline-block;
+  vertical-align:center;
+}
+
+
+</style>
+<body>
+
+
+<!-- Navbar -->
+<div class="w3-top">
+  <ul class="w3-navbar w3-card-2 w3-left-align w3-large">
+    <li class="w3-hide-medium w3-hide-large w3-opennav w3-right">
+      <a class="w3-padding-large w3-hover-white w3-large w3-grey" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    </li>
+    <li><a href="https://svanhedger.github.io/2830A/" class="w3-padding-large w3-white">Home</a></li>
+	<li class="w3-hide-small"><a href="https://svanhedger.github.io/2750E/samplescripts" class="w3-padding-large w3-hover-white" style=color:white>Sample Scripts</a></li>
+	<li class="w3-hide-small"><a href="https://svanhedger.github.io/2750E/jstutorial" class="w3-padding-large w3-hover-white" style=color:white>JavaScript Tutorial</a></li>
+  <li class="w3-hide-small"><a href="https://svanhedger.github.io/2750E/jspsychtutorial" class="w3-padding-large w3-hover-white" style=color:white>jsPsych Tutorial</a></li>
+  <li class="w3-hide-small"><a href="https://svanhedger.github.io/2750E/rtutorial" class="w3-padding-large w3-hover-white" style=color:white>R Tutorial</a></li>
+  <li class="w3-hide-small"><a href="https://svanhedger.github.io/2750E/groupprojects" class="w3-padding-large w3-hover-white" style=color:white>Group Projects</a></li>
+  </ul>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium">
+    <ul class="w3-navbar w3-left-align w3-large w3-indigo">
+	  <li><a class="w3-padding-large" style=color:white href="https://svanhedger.github.io/2750E/samplescripts">Sample Scripts</a></li>
+	  <li><a class="w3-padding-large" style=color:white href="https://svanhedger.github.io/2750E/jstutorial">JavaScript Tutorial</a></li>
+    <li><a class="w3-padding-large" style=color:white href="https://svanhedger.github.io/2750E/jspsychtutorial">jsPsych Tutorial</a></li>
+    <li><a class="w3-padding-large" style=color:white href="https://svanhedger.github.io/2750E/rtutorial">R Tutorial</a></li>
+    <li><a class="w3-padding-large" style=color:white href="https://svanhedger.github.io/2750E/groupprojects">Group Projects</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-container w3-white w3-center w3-padding-64">
+  <h1 class="w3-margin w3-xxlarge"><b>Psychology 2830A</b>
+  <p class="w3-large">Research in Psychology<br>Drs. Dumas and Van Hedger<br>Department of Psychology<br>Huron University College<br></p></h1>
+</header>
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-16 w3-container">
+  <div class="w3-content">
+    <div class="w3-threequarter">
+      <h2 class "w3-medium w3-large"><b>About This Page</b></h2>
+      <h5 class="w3-padding-16">This page serves as a repository for Psychology 2830A: Research in Psychology.
+      Materials will be added throughout the term, so please check this page regularly. If you have stumbled 
+      upon this page by accident, that is okay, too! Feel free to look around and envy (pity?) the students 
+      enrolled in Psychology 2830A. </h5>
+    </div>
+
+
+    <div class="w3-quarter w3-right">
+      <figure><img src="img/camodog.bmp" alt="" style="width:221px;"><figcaption>Random splotches, or a furry, woofing friend?</figcaption></figure>
+    </div>
+  </div>
+  <hr class="rounded"></hr>
+</div>
+
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-white w3-padding-16 w3-container">
+  <div class="w3-content">
+    <div class="w3-quarter w3-center">
+    </div>
+
+
+
+
+<p style="font-size:12px"><center>&#169; 2025. Stephen Van Hedger</center></p>
+</h5>
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+</body>
+</html>
