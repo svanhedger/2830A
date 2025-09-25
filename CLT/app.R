@@ -8,9 +8,11 @@
 #
 
 library(shiny)
+library(rsconnect)
 
 set.seed(1234567)
 
+writeManifest()
 
 
 # Define UI for application that draws a histogram
