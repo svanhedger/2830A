@@ -1,0 +1,128 @@
+---
+title: "Multiple Comparisons, Post-Hoc Tests, and Type I Errors"
+output: html_document
+---
+
+<style type="text/css">
+body, td { /* Normal text and table data */
+  font-size: 16px;
+  line-height: 1.5; /* Controls line spacing */
+}
+h1, h2, h3, h4, h5, h6 { /* Headings */
+  line-height: 1.2;
+}
+pre { /* Code blocks - determines line spacing between lines */
+  font-size: 14px;
+  line-height: 1.4; 
+}
+code.r { /* Inline R code */
+  font-size: 14px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(emmeans)
+library(tidyverse)
+```
+
+## Background
+
+When we perform an analysis of variance (ANOVA), we are interested in assessing whether at least one of our sample means significantly differs from one or more of the other sample means. Assuming our "omnibus" F-statistic is significant, we then might be interested in running follow-up, *post-hoc* tests to compare each sample mean to each other, essentially through a series of *t*-tests. Although this seems like a reasonable approach in principle, if we decide to run *post-hoc* tests, we need to apply a correction so as not to inflate our probability of making a Type I Error. 
+
+### What is a Type I Error, again??
+
+Recall that a Type I Error is a *false positive* - rejecting a null hypothesis in favor of the alternative hypothesis, when in fact the null hypothesis is true. In virtually every research context, we don't actually know whether the null hypothesis is true (if we did, we wouldn't be collecting a sample to make inferences about the population). However, by specifying a significance level (alpha) to .05, we are conceding that we are comfortable making a Type I Error 5% of the time, in the long run. 
+
+### Inflation of Type I Error
+
+The problem is that this 5% chance of making a Type I Error (assuming we set alpha to .05) applies to each inferential test we run on the same dataset. Thus, imagine we had a study that randomly assigned participants to listen to one of seven music genres (Classical, Rock, Pop, Jazz, R&B, Rap, or Country) while completing an IQ Test. If we were interested in examining the pairwise comparisons for all genres (e.g., Classical versus Rock, Classical versus Pop, etc.) we would end up performing 21 tests! Now, let's imagine that we had a crystal ball and knew that music genre had **no** effect on IQ. What are the chances that *all 21* comparisons would come back nonsignificant?
+
+You might initially think that the answer is 100% or something very close to 100% - after all, I am telling you that the null hypothesis is true in this scenario! However, remember that sample means will vary (even if coming from the same population) due to sampling error. This means that some sample means might differ enough from each other (simply due to chance) that they would be considered statistically significant. In this scenario, this is the definition of a Type I Error (as we have our magical crystal ball and know the sample means come from the same underlying distribution).
+
+To specifically calculate the probability of all 21 tests showing a nonsignificant result, we could consider the test a "success" if it shows a nonsignificant result (after all, that reflects the true state of the world). Thus, success for any given test is 95%. So, what is the probability of all 21 tests succeeding, if the chance of any single test is 95%?
+
+```{r type1error_01}
+
+(0.95)^21 #probability that all 21 tests will "succeed" in failing to find a significant difference
+
+```
+The answer, as you can see, is surprisingly low. There is only a 34% chance that all 21 tests would come back nonsignificant with a significance level (alpha) of .05. In other words, there is a 66% chance that at least one of the tests we performed will be significant simply due to chance! This is a far cry from the 5% risk of making a Type I Error that we thought we were adopting.
+
+### Simulating the inflation Type I Error
+
+In case this is still a little abstract, let's illustrate this using a simulation of the hypothetical music genre and IQ study. Below, we will create a normal distribution (*N* = 100,000) centered at 100 with a standard deviation of 15. This will represent our population distribution of IQ scores, from which we will sample our music genre groups.
+
+```{r type1error_02}
+
+set.seed(123) #for reproducing results
+
+single.dist <- rnorm(100000, 100, 15)
+hist(single.dist, main="Population Distribution of IQ", xlab="Values", ylab="Count")
+
+```
+
+<br>Now, let's randomly sample from this population to create our seven music genre groups. **Note:** that we are sampling these from the *same* distribution, plotted above. Thus, in this simulation, we know that the null hypothesis is true - i.e., the population means for all seven music genre groups are the same.
+
+```{r type1error_03}
+
+Classical <- sample(single.dist, 20)
+Rock <- sample(single.dist, 20)
+Pop <- sample(single.dist, 20)
+Jazz <- sample(single.dist, 20)
+RnB <- sample(single.dist, 20)
+Rap <- sample(single.dist, 20)
+Country <- sample(single.dist, 20)
+
+#Combine into single dataframe, shape to be in long format
+sample.data <- as.data.frame(cbind(Classical, Rock, Pop, Jazz, RnB, Rap, Country))
+sample.data$id <- 1
+sample.data.long <- sample.data %>% pivot_longer(-id, names_to = "Genre", values_to= "Scores")
+
+plot.sample <- ggplot(sample.data.long, aes(x=Genre, y=Scores, color=Genre, fill=Genre))+
+  geom_point(position=position_jitter(0.02))+
+  stat_summary(fun="mean", geom="point", color="black", size=2)+
+  stat_summary(fun.data="mean_se", geom="errorbar", width=0.2, color="black")+
+  geom_hline(yintercept=100, lwd=0.5, lty=2)+
+  labs(y="IQ Score")+
+  theme_classic() +
+  theme(legend.position="none")
+
+
+plot.sample
+
+```
+
+
+<br>So, what do we see? Although every sample mean is reasonably close to 100 (which is not surprising, given that these samples came from the same underlying distribution with a mean of 100), there is some variability between samples (also not surprising - this is essentially a visualization of sampling error). However, if we were interested in exhaustively testing *all* 21 genre comparisons, without correcting our alpha, remember that our Type I Error probability skyrockets to 66%! Let's see if we have any Type I Errors in the current simulation:
+
+```{r type1error_04, echo=FALSE}
+
+# 1. Fit a model (e.g., lm)
+model <- lm(Scores ~ Genre, data = sample.data.long)
+
+# 2. Get estimated marginal means
+emm_model <- emmeans(model, ~ Genre)
+
+# 3. Create pairwise comparisons
+emm_pairs <- pairs(emm_model)
+
+# 4. Summarize with no adjustment
+summary(emm_pairs, adjust = "none")
+
+
+```
+
+Yep! In fact, we have **three** significant comparisons (Pop vs. Jazz, Pop vs. Rap, Pop vs. Rock), with *p*-values below .05. Remember that these are by definition due to sampling error alone, so by concluding that these significantly differ, we are making Type I Errors. 
+
+### Okay, but, like, what can we do about this?
+
+Do not despair! Even if you have an unwieldy design with 10 groups (and you wish to do 45 pairwise comparisons), we can still try to manage our Type I Error inflation via alpha corrections. Indeed, post-hoc tests achieve this alpha correction in various ways. For example, the Bonferroni correction divides alpha by the number of performed tests. Thus, in our Music Genre example, we'd divide .05 by 21 and use this threshold (.002) as our new significance level. Although this would certainly remove the false positives we observed in the earlier example, this is a fairly conservative approach (reducing Type I Error but increasing the probability of making a Type II Error). Other approaches, such as the Benjamini-Hochberg procedure, keep the "false discovery rate" (FDR) for all reported significant tests at the original level specified by the researcher (typically .05). Tukey's Honestly Significant Difference (HSD) controls the family-wise error rate by specifying a critical value that pairwise comparisons need to exceed. The differences between post-hoc tests go well beyond this simple illustration, but whatever you decide to do, please plan to correct for multiple comparisons, lest the Type I Error Police come after you.
+
+
+**Happy post-hoc testing! :)**
+
+Hopefully you now find the humor in this XKCD comic
+
+![https://xkcd.com/882/](significant.png)
